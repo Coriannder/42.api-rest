@@ -1,51 +1,53 @@
-import { usuariosDao } from "../daos/daosFactory.js"
-import { createHash } from "../utils/crypt.js"
-import { sendMailNewUser } from "../utils/nodemailer.js"
-import { sendWhatsAppNewUser } from "../utils/twilio.js"
+import { RegisterServices } from "../services/register.js"
 
+let instance = null
+export class RegisterController {
 
+    constructor () {
+        this.registerServices = RegisterServices.getInstance()
+    }
 
-export const postRegisterController = async ( req , res  ) => {
-    const usuarios = await usuariosDao.listarAll()
-    const email = req.body.email
-    const password = createHash(req.body.password)
-    if(usuarios.find(usuario => usuario.email == email)){
-        req.session.message = "Este email ya se encuentra registrado, prueba con otro"
-        req.session.route = 'register'
-        req.session.fileName = req.body.fileName
-        res.redirect('/error')
-    } else {
+    static getInstance = () => {
+		if (!instance) instance = new RegisterController;
+		return instance;
+	}
+
+    saveNewUser = async ( req , res  ) => {
+
         const newUser = {
             nombre: req.body.nombre,
             direccion: req.body.direccion,
             edad: req.body.edad,
-            email: email,
-            password: password,
+            email: req.body.email,
+            password: req.body.password,
             photo: req.body.fileName,
             phone: '+549' + req.body.telefono
         }
+    
+        const response = await this.registerServices.saveNewUser( newUser )
+        console.log('response register' , response)
+    
+        if(response.error){
+            req.session.message = response.message
+            req.session.route = response.route
+            req.session.fileName = newUser.photo
+            res.redirect('/error')
+            
+        }else{
+            res.redirect('/login')
+        }
+    }
 
-        await usuariosDao.guardar( newUser ).then( res => {
-            sendMailNewUser( newUser )
-            //sendWhatsAppNewUser( newUser )
-        })
-
-        const msg = `NUEVO USUARIO REGISTARDO
-        NOMBRE: ${newUser.nombre}
-        DIRECCION: ${newUser.direccion}
-        EDAD: ${newUser.edad}
-        TELEFONO: ${newUser.phone}
-        EMAIL: ${newUser.email}
-        FOTO PERFIL:  /uploads/${newUser.photo}
-        -----------------AQUITERMINA-----------------`
-
-        res.redirect('/login')
+    render = ( req, res ) => {
+        res.render('pages/register')
     }
 }
 
-export const getRegisterController = ( req, res ) => {
-    res.render('pages/register')
-}
+
+
+
+
+
 
 
 

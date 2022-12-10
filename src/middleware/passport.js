@@ -1,5 +1,5 @@
 import passport from 'passport'
-import { usuariosDao } from '../daos/daosFactory.js'
+import { usuariosDao } from '../model/daos/daosFactory.js'
 import  { Strategy as LocalStrategy } from 'passport-local'
 import { isValidPassword } from '../utils/crypt.js'
 

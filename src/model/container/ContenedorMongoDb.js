@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import transformMongoObject from '../utils/objectUtils.js'
-import { urlMongo } from '../config/config.js'
-import { logger } from '../utils/logger.js'
+import transformMongoObject from '../../utils/objectUtils.js'
+import { urlMongo } from '../../config/config.js'
+import { logger } from '../../utils/logger.js'
 import Dto from '../dtos/index.js'
 
 
@@ -51,7 +51,7 @@ class ContenedorMongoDb {
             const res = await this.collection.create(elemento)
             return  this.dto.transform(transformMongoObject(res))
         } catch (error) {
-            logger.error(error)
+            logger.error(error )
             return false
         }
     }

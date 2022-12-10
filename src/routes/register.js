@@ -1,11 +1,22 @@
 import { Router } from 'express'
-import { getRegisterController , postRegisterController } from '../controller/register.js';
+import { RegisterController } from '../controller/register.js';
 import { upload } from '../middleware/multer.js';
 
 
 
-export const register = Router();
+const register = Router();
+const registerController = RegisterController.getInstance()
 
-register.get('/', getRegisterController )
+export class  RegisterRouter {
 
-register.post('/', upload.single('photo') , postRegisterController )
+    static start(){
+
+        register.get('/', registerController.render )
+        register.post('/', upload.single('photo') , registerController.saveNewUser )
+
+        return register
+
+    }
+}
+
+

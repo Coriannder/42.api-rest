@@ -1,6 +1,14 @@
 import { Router } from 'express'
-import { getErrorController } from '../controller/error.js'
+import { ErrorController } from '../controller/error.js'
 
-export const error = Router()
+const error = Router()
+const errorController = ErrorController.getInstance()
 
-error.get('/' , getErrorController)
+export class ErrorRouter{
+
+    static start() {
+        error.get('/' , errorController.getError)
+        return error
+    }
+}
+

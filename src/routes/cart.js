@@ -1,8 +1,18 @@
 import { Router } from 'express'
-import { getCartController , postCartAddProductController , deleteCartProductController , postCartBuyController} from '../controller/cart.js'
-export const cart = Router()
+import { CartController} from '../controller/cart.js'
 
-cart.get('/' , getCartController )
-cart.post('/addProduct' , postCartAddProductController )
-cart.delete('/deleteProduct/:id' , deleteCartProductController )
-cart.post('/buy' , postCartBuyController )
+
+
+const cart = Router()
+const cartController =  CartController.getInstance()
+
+export class RouterCart {
+
+    static start() {
+        cart.get('/' , cartController.getCart)
+        cart.post('/addProduct' , cartController.addProduct )
+        cart.delete('/deleteProduct/:id' , cartController.deleteProduct )
+        cart.post('/buy' , cartController.buyCart )
+        return cart
+    }
+}

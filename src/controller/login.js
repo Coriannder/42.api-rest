@@ -1,22 +1,35 @@
-import { usuariosDao } from "../daos/daosFactory.js"
-import { isValidPassword } from '../utils/crypt.js'
 
-export const postLoginController = async (req, res, next) => {
-    const usuarios = []
-    usuarios.push(await usuariosDao.listarAll())
-    const user = usuarios.find(usuario => usuario.email == req.body.username)
+import { LoginServices } from "../services/login.js"
 
-    if( !user) {
-        req.session.message = 'Usario no encontrado'
-    }else{
 
-        if(!isValidPassword(req.body.password , user.password)) {
-            req.session.message = 'Password incorrecto'
-        }}
-    req.session.route = 'login'
-    next();
+let instance = null
+export class LoginController {
+    constructor() {
+        this.loginServices = LoginServices.getInstance()
+    }
+
+    static getInstance = () => {
+		if (!instance) instance = new LoginController;
+		return instance;
+	}
+
+    postLogin = async (req, res, next) => {
+
+        const email = req.body.username
+        const password = req.body.password
+
+        const response = this.loginServices.autenticar( email , password)
+
+        req.session.message = response.message
+        req.session.route = response.route
+
+        next();
+    }
+
+    getLogin = (req, res) => {
+        res.render('pages/login')
+    }
 }
 
-export const getLoginController = (req, res) => {
-    res.render('pages/login')
-}
+
+

@@ -1,10 +1,21 @@
 import { Router } from 'express'
-import { getLogoutController } from '../controller/logout.js'
+import { LogoutController } from '../controller/logout.js'
 //import { authenticate } from '../middleware/passport.js';
 
 
 
-export const logout = Router();
+const logout = Router();
+const logoutController = LogoutController.getInstance()
+
+export class LogoutRouter {
+
+    static start = () => {
+
+        logout.get('/' ,  logoutController.renderLogout)
+
+        return logout
+    }
+}
 
 
-logout.get('/' ,  getLogoutController)
+

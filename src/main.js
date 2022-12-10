@@ -1,21 +1,19 @@
 import express from 'express'
 import { Server as HttpServer }  from 'http'
 import session from 'express-session'
-import { mongoSession } from './session/mongoSession.js'
+import { mongoSession } from './middleware/mongoSession.js'
 import passport from 'passport'
 import { port } from './config/config.js'
-import { login } from './routes/login.js'
-import { register } from './routes/register.js'
-import { error } from './routes/error.js'
-import { home } from './routes/home.js'
-import { cart } from './routes/cart.js'
-import { logout } from './routes/logout.js'
+import { LoginRouter } from './routes/login.js'
+import {  RegisterRouter } from './routes/register.js'
+import { ErrorRouter } from './routes/error.js'
+import { HomeRouter } from './routes/home.js'
+import { RouterCart } from './routes/cart.js'
 import cluster from 'cluster'
 import { cpus } from 'os'
 import { logger } from './utils/logger.js'
 import { mode } from './utils/yargs.js'
-
-
+import { LogoutRouter } from './routes/logout.js'
 
 
 const app = express()
@@ -39,12 +37,12 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 //------------------------------RUTAS---------------------//
-app.use( '/login', login )
-app.use( '/logout' , logout)
-app.use( '/register' , register )
-app.use( '/error' , error )
-app.use( '/home' , home )
-app.use( '/cart' , cart )
+app.use( '/login', LoginRouter.start() )
+app.use( '/logout' , LogoutRouter.start())
+app.use( '/register' , RegisterRouter.start() )
+app.use( '/error' , ErrorRouter.start() )
+app.use( '/home' , HomeRouter.start() )
+app.use( '/cart' , RouterCart.start() )
 app.get('*', (req, res) => {
     res.redirect('/login')
 })
@@ -70,7 +68,7 @@ if( mode === 'cluster' ){
         });
 
     } else {
-        //------------------Configuracion Server---------------------------------//
+//------------------Configuracion Server---------------------------------//
 
         const server = httpServer.listen(port, ()=>{
             logger.info(`Servidor escuchando en el puerto ${server.address().port}`, `numero de cpus ${numCPUs}`)

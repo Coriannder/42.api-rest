@@ -4,6 +4,7 @@ import CarritoDto from "./carritoDto.js"
 
 
 export default class Dto {
+
     constructor( typeDto ){
         this.typeDto = typeDto
     }
@@ -37,19 +38,6 @@ export default class Dto {
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

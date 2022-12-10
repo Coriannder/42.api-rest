@@ -1,5 +1,16 @@
 import { Router } from 'express'
-import { getHomeController } from '../controller/home.js'
+import { HomeController } from '../controller/home.js'
 
-export const home = Router()
-home.get('/' , getHomeController)
+
+const home = Router()
+const homeController = HomeController.getInstance()
+
+export class HomeRouter{
+
+    static start = () => {
+        home.get('/' , homeController.getHome)
+
+        return home
+    }
+}
+

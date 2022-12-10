@@ -1,13 +1,28 @@
-import fs from 'fs'
+import { ErrorServices } from "../services/error.js"
 
-export const getErrorController = (req, res ) => {
-    if(req.session.route == 'register') {
-        fs.unlinkSync('public/uploads/' + req.session.fileName)
+let instance = null
+
+export class ErrorController{
+
+    constructor() {
+        this.errorServices = ErrorServices.getInstance()
     }
 
-    res.render('pages/error' , {
-        message: req.session.message,
-        route: req.session.route
-    })
-    req.session.destroy()
+    static getInstance = () => {
+		if (!instance) instance = new ErrorController;
+		return instance;
+	}
+
+    getError = (req, res ) => {
+
+        const route = req.session.route
+        const fileName = req.session.fileName
+        this.errorServices.deleteFile( route , fileName )
+        res.render('pages/error' , {
+            message: req.session.message || 'Error',
+            route: req.session.route || 'login'
+        })
+        req.session.destroy()
+    }
 }
+

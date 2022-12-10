@@ -1,13 +1,23 @@
 import { Router } from 'express'
-import { getLoginController, postLoginController } from '../controller/login.js'
+import { LoginController } from '../controller/login.js'
 import { authenticate } from '../middleware/passport.js';
 
 
 
-export const login = Router();
+const login = Router();
+const loginController = LoginController.getInstance()
+
+export class LoginRouter {
+
+    static start() {
+
+        login.get('/' ,  loginController.getLogin)
+        login.post('/' , loginController.postLogin, authenticate )
+
+        return login
+    }
+}
 
 
-login.get('/' ,  getLoginController)
 
-login.post('/' , postLoginController, authenticate )
 

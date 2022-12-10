@@ -1,4 +1,4 @@
-import { persistance } from "../utils/yargs.js"
+import { persistance } from "../../utils/yargs.js"
 
 
 export default class ProductoDto {
